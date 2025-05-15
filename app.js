@@ -6,7 +6,7 @@ const nowDiv = document.getElementById("stoixeia");
 const todayDiv = document.getElementById("today");
 const allDiv = document.getElementById("ALL");
 
-// Event listeners
+
 nowButton.addEventListener("click", () => changeMode("now"));
 todayButton.addEventListener("click", () => changeMode("today"));
 selectDateButton.addEventListener("click", () => changeMode("selectdate"));
@@ -46,10 +46,21 @@ function CurrentWeather(current) {
   const wind = document.createElement("p");
   wind.textContent = `Wind: ${current.windspeed} m/s`;
 
+  const icon = document.createElement("img");
+  icon.alt = "Weather icon";
+  icon.id="protieikona";
+
+  if (current.temperature > 20) {
+    icon.src = "icons/sun.png";
+  } else {
+    icon.src = "icons/sun-cloud.png";
+  }
+
   container.appendChild(temp);
   container.appendChild(wind);
 
   nowDiv.appendChild(container);
+  nowDiv.appendChild(icon);
 }
 
 function showNow() {
@@ -59,21 +70,22 @@ function showNow() {
   selectDateButton.style.display = "block";
 }
 
-function showToday() {
+function showToday(date = null) {
   nowDiv.style.display = "none";
   todayDiv.style.display = "block";
   meresContainer.style.display = "none";
   selectDateButton.style.display = "block";
 
-  fillHourlyForecast();
+  fillHourlyForecast(date);
 }
+
 
 function showSelectDate() {
   nowDiv.style.display = "flex";
   todayDiv.style.display = "none";
   selectDateButton.style.display = "none";
   meresContainer.style.display = "flex";
-  meresContainer.innerHTML = ""; // Clear old buttons
+  meresContainer.innerHTML = ""; 
 
   for (let i = 1; i <= 6; i++) {
     const dayButton = document.createElement("button");
@@ -89,68 +101,106 @@ function showSelectDate() {
 }
 
 function Spesificday(event) {
+  const dateText = event.target.textContent;
+  const today = new Date();
+  const selected = `2025-05-${dateText.split("/")[0].padStart(2, "0")}`; 
+
   nowDiv.style.display = "none";
   todayDiv.style.display = "block";
   meresContainer.style.display = "block";
   selectDateButton.style.display = "none";
 
-  // Καθαρίζουμε την active-day από όλα τα κουμπιά
-  const allButtons = document.getElementsByClassName("selectmera");
-  for (let btn of allButtons) {
+  for (let btn of document.getElementsByClassName("selectmera")) {
     btn.classList.remove("active-day");
   }
-
-  // Προσθέτουμε την κλάση active-day στο επιλεγμένο κουμπί
   event.target.classList.add("active-day");
 
-  fillHourlyForecast();
+  showToday(selected);
 }
 
-function fillHourlyForecast() {
+
+function fillHourlyForecast(selectedDate = null) {
   todayDiv.innerHTML = "";
   const hourlyForecast = document.createElement("div");
   hourlyForecast.id = "hourly-forecast";
 
-  for (let i = 0; i < 24; i++) {
-    const hourBox = document.createElement("div");
-    hourBox.className = "hour-box";
+  if (!weatherData || !weatherData.hourly) {
+    todayDiv.textContent = "Δεν υπάρχουν δεδομένα.";
+    return;
+  }
 
-    const hour = document.createElement("p");
-    hour.className = "hour";
-    hour.textContent = `${i}:00`;
+  const times = weatherData.hourly.time;
+  const temps = weatherData.hourly.temperature_2m;
+  const codes = weatherData.hourly.weathercode;
 
-    const tempValue = 8 + Math.floor(Math.random() * 21);
-    const temp = document.createElement("p");
-    temp.className = "temp";
-    temp.textContent = `${tempValue}°C`;
+  
+  const today = selectedDate || new Date().toISOString().split("T")[0];
 
-    const icon = document.createElement("img");
-    if (tempValue > 15) {
-      icon.src = "icons/sun.png";
-    } else {
-      icon.src = "icons/sun-cloud.png";
+  for (let i = 0; i < times.length; i++) {
+    if (times[i].startsWith(today)) {
+      const hour = times[i].split("T")[1].split(":")[0];
+
+      const hourBox = document.createElement("div");
+      hourBox.className = "hour-box";
+
+      const hourEl = document.createElement("p");
+      hourEl.className = "hour";
+      hourEl.textContent = `${hour}:00`;
+
+      const tempEl = document.createElement("p");
+      tempEl.className = "temp";
+      tempEl.textContent = `${temps[i]}°C`;
+
+      const icon = document.createElement("img");
+      icon.alt = "Weather icon";
+      icon.src = getIconFromCode(codes[i]);
+
+      hourBox.appendChild(hourEl);
+      hourBox.appendChild(icon);
+      hourBox.appendChild(tempEl);
+      hourlyForecast.appendChild(hourBox);
     }
-
-    icon.alt = `Weather icon for ${i}:00`;
-
-    hourBox.appendChild(hour);
-    hourBox.appendChild(icon);
-    hourBox.appendChild(temp);
-    hourlyForecast.appendChild(hourBox);
   }
 
   todayDiv.appendChild(hourlyForecast);
 }
 
+function getIconFromCode(code) {
+  if (code === 0) return "icons/sun.png";
+  if (code === 1 || code === 2) return "icons/sun-cloud.png";
+  if (code === 3) return "icons/cloud.png";
+  if (code >= 45 && code <= 48) return "icons/fog.png";
+  if (code >= 51 && code <= 67) return "icons/rain.png";
+  if (code >= 71 && code <= 77) return "icons/snow.png";
+  if (code >= 80 && code <= 82) return "icons/rain.png";
+  if (code >= 95) return "icons/thunder.png";
+  return "icons/sun.png"; 
+}
+
+
 const latitude = 40.5872;
 const longitude = 22.9482;
-const weatherURL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true`;
+const weatherURL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&hourly=temperature_2m,weathercode&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto`;
+
+
+
+
+
 
 function fetchCurrentWeather() {
   fetch(weatherURL)
     .then(response => response.json())
     .then(data => {
-      CurrentWeather(data.current_weather); // στέλνουμε ΜΟΝΟ το κομμάτι που χρειαζόμαστε
+      weatherData = data; 
+      CurrentWeather(data.current_weather);
+      drawTemperatureChart(data.daily); 
     })
     .catch(error => console.error("Error fetching weather:", error));
 }
+
+window.onload = () => {
+  changeMode("now");       
+  fetchCurrentWeather();   
+};
+
+let weatherData = null;

@@ -20,7 +20,7 @@ body {
   width: 600px;
 }
 
-/* Buttons */
+
 #koumpia {
   display: flex;
   gap: 10px;
@@ -41,7 +41,7 @@ body {
   background-color: lightgreen;
 }
 
-/* Main Weather */
+
 #stoixeia {
   display: flex;
   align-items: center;
@@ -56,7 +56,7 @@ body {
   height: 80px;
 }
 
-/* Hourly Forecast */
+
 #hourly-forecast {
   display: flex;
   overflow-x: auto;
@@ -78,7 +78,7 @@ body {
   height: 40px;
 }
 
-/* Times section */
+
 #Times {
   display: flex;
   flex-wrap: wrap;
@@ -97,7 +97,7 @@ body {
 }
 #koumpia button.active-day {
   background-color: lightgreen !important;
-  color: black; /* ή ό,τι θες για να φαίνεται σωστά */
+  color: black; 
 }
 
 

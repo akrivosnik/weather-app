@@ -7,13 +7,13 @@ const temperatureChart = new Chart(chart, {
     datasets: [{
       label: 'Temperature',
       data: [16, 9, 10, 18, 21, 17, 15], 
-      backgroundColor: 'rgba(144, 238, 144, 0.2)', // γέμισμα κάτω από τη γραμμή
-      borderColor: 'green', // γραμμή γραφήματος
-      borderWidth: 2,  //ποσο παχια θα ειναι η γραμμη
-      tension: 0.4, // καμπυλότητα
-      fill: true, // να γεμίσει από κάτω
-      pointRadius: 5, // μέγεθος κύκλου σε κάθε τιμή
-      pointHoverRadius: 7, // όταν περνάει το ποντίκι
+      backgroundColor: 'rgba(144, 238, 144, 0.2)', 
+      borderColor: 'green', 
+      borderWidth: 2,  
+      tension: 0.4, 
+      fill: true, 
+      pointRadius: 5, 
+      pointHoverRadius: 7, 
     }]
   },
 options: {
