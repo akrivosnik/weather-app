@@ -1,0 +1,143 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  background-color: #f9f9f9;
+  padding: 20px;
+}
+
+#ALL {
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  width: 600px;
+}
+
+/* Menu */
+#selection-widget {
+  width: 100%;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+}
+
+#koumpia {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+}
+
+#koumpia button {
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: white;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+#koumpia button:hover {
+  background-color: #e6f4ea;
+}
+
+#Now.active {
+  background-color: #c9f0d3;
+  border: 1px solid #87d19d;
+}
+
+/* Main Weather Info */
+#stoixeia {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  margin-bottom: 20px;
+}
+
+#stoixeia h1,
+#stoixeia p {
+  text-align: left;
+  padding-left: 13px;
+}
+
+#stoixeia h1 {
+  margin-bottom: 4px;
+}
+
+#protieikona {
+  width: 100px;
+  height: 80px;
+  padding-right: 13px;
+}
+
+/* Stats */
+#Times {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+#Times > div {
+  flex: 1 1 calc(50% - 10px);
+  min-width: 45%;
+  background-color: #f9f9f9;
+  border-radius: 16px;
+  padding: 15px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+}
+
+/* Hourly Forecast */
+#hourly-forecast {
+  display: flex;
+  overflow-x: auto;
+  gap: 20px;
+  padding: 10px 0;
+  background-color: #f0f0f0;
+  border-radius: 16px;
+  margin-bottom: 30px;
+}
+
+.hour-box {
+  min-width: 80px;
+  text-align: center;
+  background: white;
+  padding: 10px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.hour-box img {
+  width: 40px;
+  height: 40px;
+}
+
+.hour {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.temp {
+  color: #444;
+  margin-top: 5px;
+}
+
+/* Chart Section */
+#Diagrama {
+  padding: 20px 0 10px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+#eikona2 {
+  width: 100%;
+  height: auto;
+}
