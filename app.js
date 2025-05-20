@@ -1,3 +1,4 @@
+
 const nowButton = document.getElementById("Now");
 const todayButton = document.getElementById("Today");
 const selectDateButton = document.getElementById("SelectDate");
@@ -12,7 +13,7 @@ todayButton.addEventListener("click", () => changeMode("today"));
 selectDateButton.addEventListener("click", () => changeMode("selectdate"));
 
 function changeMode(mode) {
-  allDiv.className = `${mode}-mode`;
+ 
 
   if (mode === "now") {
     showNow();
@@ -81,17 +82,28 @@ function showToday(date = null) {
 
 
 function showSelectDate() {
-  nowDiv.style.display = "flex";
+  if (!weatherData || !weatherData.daily || !weatherData.daily.time) {
+    alert("Δεν υπάρχουν διαθέσιμες ημερομηνίες.");
+    return;
+  }
+
+  allDiv.className = "selectdate-mode";
+  nowDiv.style.display = "none";
   todayDiv.style.display = "none";
   selectDateButton.style.display = "none";
   meresContainer.style.display = "flex";
-  meresContainer.innerHTML = ""; 
+  meresContainer.innerHTML = "";
 
-  for (let i = 1; i <= 6; i++) {
-    const dayButton = document.createElement("button");
-    dayButton.className = "selectmera";
-    dayButton.textContent = `${i+14}/5`;
-    meresContainer.appendChild(dayButton);
+  
+  const availableDates = weatherData.daily.time;
+
+  for (let date of availableDates) {
+    const [year, month, day] = date.split("-");
+    const button = document.createElement("button");
+    button.className = "selectmera";
+    button.textContent = `${parseInt(day)}/${parseInt(month)}`;
+    button.dataset.fullDate = date;
+    meresContainer.appendChild(button);
   }
 
   const gegonosimeras = document.getElementsByClassName("selectmera");
@@ -100,14 +112,13 @@ function showSelectDate() {
   }
 }
 
+
 function Spesificday(event) {
-  const dateText = event.target.textContent;
-  const today = new Date();
-  const selected = `2025-05-${dateText.split("/")[0].padStart(2, "0")}`; 
+  const selected = event.target.dataset.fullDate;
 
   nowDiv.style.display = "none";
   todayDiv.style.display = "block";
-  meresContainer.style.display = "block";
+  meresContainer.style.display = "flex"; 
   selectDateButton.style.display = "none";
 
   for (let btn of document.getElementsByClassName("selectmera")) {
@@ -115,11 +126,11 @@ function Spesificday(event) {
   }
   event.target.classList.add("active-day");
 
-  showToday(selected);
+  fillHourlyForecast(selected);
 }
 
 
-function fillHourlyForecast(selectedDate = null) {
+function fillHourlyForecast(selectedDate = null) {  //pairnei null mono se periptosi pou den exei to selcted timi.
   todayDiv.innerHTML = "";
   const hourlyForecast = document.createElement("div");
   hourlyForecast.id = "hourly-forecast";
@@ -182,11 +193,6 @@ const latitude = 40.5872;
 const longitude = 22.9482;
 const weatherURL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&hourly=temperature_2m,weathercode&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto`;
 
-
-
-
-
-
 function fetchCurrentWeather() {
   fetch(weatherURL)
     .then(response => response.json())
@@ -194,6 +200,7 @@ function fetchCurrentWeather() {
       weatherData = data; 
       CurrentWeather(data.current_weather);
       drawTemperatureChart(data.daily); 
+      updateNowDetails();
     })
     .catch(error => console.error("Error fetching weather:", error));
 }
@@ -204,3 +211,37 @@ window.onload = () => {
 };
 
 let weatherData = null;
+
+function updateNowDetails() {
+  if (!weatherData) return;
+
+  // Πάρε τα δεδομένα από το API (προσαρμόστε αν τα πεδία είναι άλλα)
+  const temp = weatherData.hourly.temperature_2m[0];
+  const feelsLike = weatherData.hourly.apparent_temperature[0];
+  const wind = weatherData.hourly.windspeed_10m[0];
+  const windGust = weatherData.hourly.windgusts_10m[0];
+  const windDeg = weatherData.hourly.winddirection_10m[0];
+  const humidity = weatherData.hourly.relativehumidity_2m[0];
+  const pressure = weatherData.hourly.pressure_msl[0];
+
+  const timesDiv = document.getElementById('Times');
+  const divs = timesDiv.children;
+
+  divs[0].querySelector('h1').textContent = `${temp}°C`;
+  divs[0].querySelector('p').textContent = 'Temperature';
+
+  divs[1].querySelector('h1').textContent = `${feelsLike}°C`;
+  divs[1].querySelector('p').textContent = 'Feels Like';
+
+  divs[2].querySelector('h1').textContent = `${wind} m/s`;
+  divs[2].querySelector('p').textContent = 'Wind';
+
+  divs[3].querySelector('h1').textContent = `${windGust} m/s`;
+  divs[3].querySelector('p').textContent = 'Wind Gust';
+
+  divs[4].querySelector('h1').textContent = `${windDeg}°`;
+  divs[4].querySelector('p').textContent = 'Wind Deg';
+
+  divs[5].querySelector('h1').textContent = `${humidity}%`;
+  divs[5].querySelector('p').textContent = 'Humidity';
+}
