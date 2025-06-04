@@ -191,7 +191,8 @@ function getIconFromCode(code) {
 
 const latitude = 40.5872;
 const longitude = 22.9482;
-const weatherURL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&hourly=temperature_2m,weathercode&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto`;
+const weatherURL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current_weather=true&hourly=temperature_2m,apparent_temperature,windspeed_10m,windgusts_10m,winddirection_10m,relativehumidity_2m,pressure_msl,weathercode&daily=temperature_2m_max,temperature_2m_min,weathercode&timezone=auto`;
+
 
 function fetchCurrentWeather() {
   fetch(weatherURL)
@@ -199,7 +200,7 @@ function fetchCurrentWeather() {
     .then(data => {
       weatherData = data; 
       CurrentWeather(data.current_weather);
-      drawTemperatureChart(data.daily); 
+      drawTemperatureChart(data.daily);
       updateNowDetails();
     })
     .catch(error => console.error("Error fetching weather:", error));
@@ -213,35 +214,37 @@ window.onload = () => {
 let weatherData = null;
 
 function updateNowDetails() {
-  if (!weatherData) return;
+  if (!weatherData || !weatherData.hourly) return;
 
-  // Πάρε τα δεδομένα από το API (προσαρμόστε αν τα πεδία είναι άλλα)
-  const temp = weatherData.hourly.temperature_2m[0];
-  const feelsLike = weatherData.hourly.apparent_temperature[0];
-  const wind = weatherData.hourly.windspeed_10m[0];
-  const windGust = weatherData.hourly.windgusts_10m[0];
-  const windDeg = weatherData.hourly.winddirection_10m[0];
-  const humidity = weatherData.hourly.relativehumidity_2m[0];
-  const pressure = weatherData.hourly.pressure_msl[0];
+  
+  const temp = weatherData.hourly.temperature_2m?.[0];
+  const feelsLike = weatherData.hourly.apparent_temperature?.[0];
+  const wind = weatherData.hourly.windspeed_10m?.[0];
+  const windGust = weatherData.hourly.windgusts_10m?.[0];
+  const windDeg = weatherData.hourly.winddirection_10m?.[0];
+  const humidity = weatherData.hourly.relativehumidity_2m?.[0];
 
   const timesDiv = document.getElementById('Times');
+  if (!timesDiv || timesDiv.children.length < 6) return;
+
   const divs = timesDiv.children;
 
-  divs[0].querySelector('h1').textContent = `${temp}°C`;
+  
+  divs[0].querySelector('h1').textContent = temp !== undefined ? `${temp}°C` : '-';
   divs[0].querySelector('p').textContent = 'Temperature';
 
-  divs[1].querySelector('h1').textContent = `${feelsLike}°C`;
+  divs[1].querySelector('h1').textContent = feelsLike !== undefined ? `${feelsLike}°C` : '-';
   divs[1].querySelector('p').textContent = 'Feels Like';
 
-  divs[2].querySelector('h1').textContent = `${wind} m/s`;
+  divs[2].querySelector('h1').textContent = wind !== undefined ? `${wind} m/s` : '-';
   divs[2].querySelector('p').textContent = 'Wind';
 
-  divs[3].querySelector('h1').textContent = `${windGust} m/s`;
+  divs[3].querySelector('h1').textContent = windGust !== undefined ? `${windGust} m/s` : '-';
   divs[3].querySelector('p').textContent = 'Wind Gust';
 
-  divs[4].querySelector('h1').textContent = `${windDeg}°`;
-  divs[4].querySelector('p').textContent = 'Wind Deg';
+  divs[4].querySelector('h1').textContent = windDeg !== undefined ? `${windDeg}°` : '-';
+  divs[4].querySelector('p').textContent = 'Wind Direction';
 
-  divs[5].querySelector('h1').textContent = `${humidity}%`;
+  divs[5].querySelector('h1').textContent = humidity !== undefined ? `${humidity}%` : '-';
   divs[5].querySelector('p').textContent = 'Humidity';
 }
