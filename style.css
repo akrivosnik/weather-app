@@ -17,7 +17,8 @@ body {
   border-radius: 20px;
   box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
   padding: 20px;
-  width: 600px;
+  width: 100%;       /* Πιάνει όλο το διαθέσιμο πλάτος */
+  max-width: 600px;  /* Αλλά δεν ξεπερνάει τα 600px */
 }
 
 
@@ -100,5 +101,21 @@ body {
   color: black; 
 }
 
+@media (max-width: 600px) {
+  body {
+    padding: 10px; /* Λιγότερο κενό γύρω-γύρω στο κινητό */
+  }
 
+  #koumpia {
+    flex-wrap: wrap; /* Τα κουμπιά θα πηγαίνουν σε επόμενη σειρά αν δεν χωράνε */
+  }
 
+  #Times > div {
+    flex: 1 1 100%; /* Τα κουτάκια με τις λεπτομέρειες θα πιάνουν όλο το πλάτος (ένα ανά σειρά) */
+  }
+
+  #stoixeia {
+    flex-direction: column; /* Η εικόνα και το κείμενο θα μπαίνουν το ένα κάτω από το άλλο */
+    text-align: center;
+  }
+}
