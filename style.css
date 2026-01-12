@@ -107,6 +107,8 @@ body {
   }
 
   #koumpia {
+    display: flex;                
+    flex-wrap: nowrap !important;
     justify-content: flex-start; 
     overflow-x: auto;            
     white-space: nowrap;         
@@ -117,7 +119,6 @@ body {
   #koumpia button {
     flex: 0 0 auto;              
   }
- 
 
   #Times > div {
     flex: 1 1 100%; 
