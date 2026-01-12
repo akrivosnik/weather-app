@@ -103,19 +103,28 @@ body {
 
 @media (max-width: 600px) {
   body {
-    padding: 10px; /* Λιγότερο κενό γύρω-γύρω στο κινητό */
+    padding: 10px; 
   }
 
   #koumpia {
-    flex-wrap: wrap; /* Τα κουμπιά θα πηγαίνουν σε επόμενη σειρά αν δεν χωράνε */
+    justify-content: flex-start; 
+    overflow-x: auto;            
+    white-space: nowrap;         
+    padding: 10px 5px;
+    -webkit-overflow-scrolling: touch; 
   }
 
+  #koumpia button {
+    flex: 0 0 auto;              
+  }
+ 
+
   #Times > div {
-    flex: 1 1 100%; /* Τα κουτάκια με τις λεπτομέρειες θα πιάνουν όλο το πλάτος (ένα ανά σειρά) */
+    flex: 1 1 100%; 
   }
 
   #stoixeia {
-    flex-direction: column; /* Η εικόνα και το κείμενο θα μπαίνουν το ένα κάτω από το άλλο */
+    flex-direction: column; 
     text-align: center;
   }
 }
